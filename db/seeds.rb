@@ -10,9 +10,12 @@ require 'open-uri'
 
 url ='http://www.thecocktaildb.com/api/json/v1/1/list.php?i=list'
 ingredients_serialized = open(url).read
-ingredients = JSON.parse(ingredients_serialized)
+ingredients_raw = JSON.parse(ingredients_serialized)
+ingredients = ingredients_raw["drinks"].map { |item| item["strIngredient1"] }
+ingredients_sorted = ingredients.sort_by { |item| item.downcase }
 
-ingredients["drinks"].each do |ingredient|
-  # puts ingredient["strIngredient1"]
-  Ingredient.create(name: ingredient["strIngredient1"])
+ingredients_sorted.each do |ingredient|
+  Ingredient.create(name: ingredient.capitalize)
 end
+
+
